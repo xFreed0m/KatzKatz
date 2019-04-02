@@ -1,0 +1,4 @@
+colorlog
+python-magic
+libmagic
+python-magic-bin
