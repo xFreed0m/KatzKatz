@@ -7,10 +7,10 @@ Once you getter many of those (and usually some of them contain many credential 
 to track and understand which users you compromised. KatzKatz will parse those for you and will output a CSV file 
 containing only valid* sets so you can filter more easily and get the ones you need.
 ## Specific features
-The tool will only parse valid* sets of credentials and will ommit the 'null' ones.
+The tool will only parse valid* sets of credentials and will omit the 'null' ones.
 In addition, it will compare the output and will save only unique sets of credentials.
 
-*I'm not sure if 'valid' is the right word, KatzKatz will save results that containg atleast username + password and\or NTLM password hash.
+*I'm not sure if 'valid' is the right word, KatzKatz will save results that containing at least username + password and\or NTLM password hash.
 
 ## How to use it
 First, install the needed dependencies:
@@ -28,7 +28,7 @@ python KatzKatz.py -f [FILENAME]
 * -o
  * output file name (csv)
  
-### Compatability
+### Compatibility
 This was tested with python 2.7 and Mimikatz 2.0+ version
 
 ### Example
