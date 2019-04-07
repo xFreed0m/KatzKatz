@@ -1,9 +1,0 @@
-Domain,Username,Password,NTLM-Hash
-MUTINY1,test1,,47bf8039a8506cd67c524a03ff84ba4e1
-MUTINY.LOCAL3,test2,blabla3,
-MUTINY2,test3,Testing2,
-MUTINY.LOCAL3,test4,blabla3,
-MUTINY.LOCAL3,test5,blabla3,
-MUTINY.LOCAL3,test6,blabla3	,
-MUTINY,test1,,47bf8039a8506cd67c524a03ff84ba4e
-MUTINY,Administrator,,c50e3b2c4d30fb12b134158c89dbb676
