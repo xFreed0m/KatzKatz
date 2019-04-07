@@ -11,9 +11,6 @@ import os
 import re
 import magic
 
-# Global vars
-LOGGER = None
-
 
 def my_args():
 	args_parser = argparse.ArgumentParser()
@@ -56,7 +53,7 @@ def excptn(e):
 
 def output(filename, db):
 	try:
-		with open(filename + ".csv", mode='ab') as output_csv:
+		with open(filename + ".csv", mode='a') as output_csv:
 			fieldnames = ['Domain', 'Username', 'Password', 'NTLM-Hash']
 			creds_writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
 			creds_writer.writeheader()  # adding the 1st line for the csv for filtering
@@ -130,9 +127,10 @@ def parser(input_file):
 	except Exception as e:
 		excptn(e)
 
+
 def logo():
-	print """
-	 /$$   /$$             /$$              /$$   /$$             /$$             
+	print("""
+	/$$   /$$             /$$              /$$   /$$             /$$             
 	| $$  /$$/            | $$             | $$  /$$/            | $$             
 	| $$ /$$/   /$$$$$$  /$$$$$$  /$$$$$$$$| $$ /$$/   /$$$$$$  /$$$$$$  /$$$$$$$$
 	| $$$$$/   |____  $$|_  $$_/ |____ /$$/| $$$$$/   |____  $$|_  $$_/ |____ /$$/
@@ -140,8 +138,8 @@ def logo():
 	| $$\  $$  /$$__  $$  | $$ /$$ /$$__/  | $$\  $$  /$$__  $$  | $$ /$$ /$$__/  
 	| $$ \  $$|  $$$$$$$  |  $$$$//$$$$$$$$| $$ \  $$|  $$$$$$$  |  $$$$//$$$$$$$$
 	|__/  \__/ \_______/   \___/ |________/|__/  \__/ \_______/   \___/ |________/
-	"""
-	print '\nKatzKatz By @x_Freed0m\n'
+	""")
+	print('\nKatzKatz By @x_Freed0m\n')
 
 
 def main():
