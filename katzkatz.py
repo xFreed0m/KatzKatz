@@ -17,16 +17,14 @@ LOGGER = None
 
 def my_args():
 	args_parser = argparse.ArgumentParser()
-	input_group = args_parser.add_mutually_exclusive_group(required=True)
+	input_group = args_parser.add_mutually_exclusive_group(required=True)  # get at least file or folder
 	input_group.add_argument('-F', '--folder', help="Folder containing multiple text files to parse")
 	input_group.add_argument('-f', '--file', help="Single text file to parse")
 	args_parser.add_argument('-o', '--output', help="Output csv file to save the creds", default="katzkatz")
-	args_parser.add_argument('-V', '--verbose', help="Turn on verbosity to print failed attempts", action="store_true",
-							default=False)
 	return args_parser.parse_args()
 
 
-def configure_logger(verbose=False):
+def configure_logger():
 	"""
 		This function is responsible to configure logging object.
 	"""
@@ -34,13 +32,7 @@ def configure_logger(verbose=False):
 	global LOGGER
 	LOGGER = logging.getLogger("KatzKatz")
 	# Set logging level
-	try:
-		if verbose:
-			LOGGER.setLevel(logging.DEBUG)
-		else:
-			LOGGER.setLevel(logging.INFO)
-	except Exception as e:
-		print(e)
+	LOGGER.setLevel(logging.INFO)
 
 	# Create console handler
 	log_colors = {
@@ -67,29 +59,29 @@ def output(filename, db):
 		with open(filename + ".csv", mode='ab') as output_csv:
 			fieldnames = ['Domain', 'Username', 'Password', 'NTLM-Hash']
 			creds_writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
-			creds_writer.writeheader()
+			creds_writer.writeheader()  # adding the 1st line for the csv for filtering
 			duplicate_rows = []
 			total_unique = 0
 
 			for row in db:
-				if row in duplicate_rows:
+				if row in duplicate_rows:  # removing the same sets of creds
 					continue
 				creds_writer.writerow(row)
 				duplicate_rows.append(row)
 				total_unique += 1
 			return total_unique
-	except Exception as e:
-		excptn(e)
 	except KeyboardInterrupt:
 		LOGGER.critical("[CTRL+C] Stopping the tool")
 		exit(1)
+	except Exception as e:
+		excptn(e)
 
 
 def folder(path):
 	return [os.path.join(path, f) for f in os.listdir(path)]
 
 
-def is_valid_input(file_location):
+def is_valid_input(file_location):  # checking if file is txt or not (when running over a folder)
 	mime = magic.Magic(mime=True)
 	return os.path.isfile(file_location) and mime.from_file(file_location) == 'text/plain'
 
@@ -132,17 +124,30 @@ def parser(input_file):
 					if user_dict not in db:
 						db.append(user_dict)
 		return db, cred_counter
-	except Exception as e:
-		excptn(e)
 	except KeyboardInterrupt:
 		LOGGER.critical("[CTRL+C] Stopping the tool")
 		exit(1)
+	except Exception as e:
+		excptn(e)
+
+def logo():
+	print """
+	 /$$   /$$             /$$              /$$   /$$             /$$             
+	| $$  /$$/            | $$             | $$  /$$/            | $$             
+	| $$ /$$/   /$$$$$$  /$$$$$$  /$$$$$$$$| $$ /$$/   /$$$$$$  /$$$$$$  /$$$$$$$$
+	| $$$$$/   |____  $$|_  $$_/ |____ /$$/| $$$$$/   |____  $$|_  $$_/ |____ /$$/
+	| $$  $$    /$$$$$$$  | $$      /$$$$/ | $$  $$    /$$$$$$$  | $$      /$$$$/ 
+	| $$\  $$  /$$__  $$  | $$ /$$ /$$__/  | $$\  $$  /$$__  $$  | $$ /$$ /$$__/  
+	| $$ \  $$|  $$$$$$$  |  $$$$//$$$$$$$$| $$ \  $$|  $$$$$$$  |  $$$$//$$$$$$$$
+	|__/  \__/ \_______/   \___/ |________/|__/  \__/ \_______/   \___/ |________/
+	"""
+	print '\nKatzKatz By @x_Freed0m\n'
 
 
 def main():
-	print '\nKatzKatz By @x_Freed0m\n'
+	logo()
 	args = my_args()
-	configure_logger(args.verbose)
+	configure_logger()
 	total_creds = 0
 	total_unique = 0
 	db = []
@@ -161,22 +166,20 @@ def main():
 				db += new_db
 			total_unique = output(args.output, db)
 		else:
-			LOGGER.warning('Could not find it! Did you specified existing file or folder?')
+			LOGGER.warning('Could not find it! Did you specify existing file or folder?')
 		LOGGER.info('All done! parsed %s sets credentials, found %s valid creds\nUnique sets: %s.' % (
 			total_creds, len(db), total_unique))
-	except Exception as e:
-		excptn(e)
 	except KeyboardInterrupt:
 		LOGGER.critical("[CTRL+C] Stopping the tool")
 		exit(1)
+	except Exception as e:
+		excptn(e)
 
 
 if __name__ == '__main__':
 	main()
 
 # TODO: verify variables names are fine (beautify the code)
-# TODO: add comments to the code
+# TODO: add keytab generation
 # TODO: add support for pin-codes
-# TODO: print logs where needed
-# TODO: add logo def
 # TODO: print progress bar
