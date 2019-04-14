@@ -4,21 +4,25 @@
 
 
 import argparse
-import sys
-from colorlog import ColoredFormatter
-import logging
 import csv
+import logging
 import os
 import re
+import sys
+
 import magic
+from colorlog import ColoredFormatter
 
 
 def my_args():
     args_parser = argparse.ArgumentParser()
-    input_group = args_parser.add_mutually_exclusive_group(required=True)  # get at least file or folder
-    input_group.add_argument('-F', '--folder', help="Folder containing multiple text files to parse")
+    input_group = args_parser.add_mutually_exclusive_group(
+        required=True)  # get at least file or folder
+    input_group.add_argument('-F', '--folder',
+                             help="Folder containing multiple text files to parse")
     input_group.add_argument('-f', '--file', help="Single text file to parse")
-    args_parser.add_argument('-o', '--output', help="Output csv file to save the creds", default="katzkatz")
+    args_parser.add_argument('-o', '--output', help="Output csv file to save the creds",
+                             default="katzkatz")
     return args_parser.parse_args()
 
 
@@ -86,14 +90,16 @@ def is_valid_input(file_location):  # checking if file is txt or not (when runni
 
 def parser(input_file):
     if not is_valid_input(input_file):
-        LOGGER.error("File isn't text or doesn't exist, please recheck (moving forward to the next one)")
+        LOGGER.error(
+            "File isn't text or doesn't exist, please recheck (moving forward to the next one)")
         return [], 0
     try:
-        paragraph_regex = re.compile("\t((msv|tspkg|wdigest|kerberos|ssp|credman) :\t)\n((\t .*\n)+)", re.M)
-        username_regex = re.compile("\s*\*\s+Username\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
-        password_regex = re.compile("\s*\*\s+Password\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
-        domain_regex = re.compile("\s*\*\s+Domain\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
-        ntlm_regex = re.compile("\s*\*\s+NTLM\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
+        paragraph_regex = re.compile(
+            r"\t((msv|tspkg|wdigest|kerberos|ssp|credman) :\t)\n((\t .*\n)+)", re.M)
+        username_regex = re.compile(r"\s*\*\s+Username\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
+        password_regex = re.compile(r"\s*\*\s+Password\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
+        domain_regex = re.compile(r"\s*\*\s+Domain\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
+        ntlm_regex = re.compile(r"\s*\*\s+NTLM\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
         db = []
         with open(input_file) as i:
             mimikatz_content = i.read()
@@ -130,13 +136,13 @@ def parser(input_file):
 
 
 def logo():
-    print("""
-    /$$   /$$             /$$              /$$   /$$             /$$             
-    | $$  /$$/            | $$             | $$  /$$/            | $$             
+    print(r"""
+     /$$   /$$             /$$              /$$   /$$             /$$
+    | $$  /$$/            | $$             | $$  /$$/            | $$
     | $$ /$$/   /$$$$$$  /$$$$$$  /$$$$$$$$| $$ /$$/   /$$$$$$  /$$$$$$  /$$$$$$$$
     | $$$$$/   |____  $$|_  $$_/ |____ /$$/| $$$$$/   |____  $$|_  $$_/ |____ /$$/
-    | $$  $$    /$$$$$$$  | $$      /$$$$/ | $$  $$    /$$$$$$$  | $$      /$$$$/ 
-    | $$\  $$  /$$__  $$  | $$ /$$ /$$__/  | $$\  $$  /$$__  $$  | $$ /$$ /$$__/  
+    | $$  $$    /$$$$$$$  | $$      /$$$$/ | $$  $$    /$$$$$$$  | $$      /$$$$/
+    | $$\  $$  /$$__  $$  | $$ /$$ /$$__/  | $$\  $$  /$$__  $$  | $$ /$$ /$$__/
     | $$ \  $$|  $$$$$$$  |  $$$$//$$$$$$$$| $$ \  $$|  $$$$$$$  |  $$$$//$$$$$$$$
     |__/  \__/ \_______/   \___/ |________/|__/  \__/ \_______/   \___/ |________/
     """)
@@ -166,8 +172,9 @@ def main():
             total_unique = output(args.output, db)
         else:
             LOGGER.warning('Could not find it! Did you specify existing file or folder?')
-        LOGGER.info('All done! parsed %s sets credentials, found %s valid creds\nUnique sets: %s.' % (
-            total_creds, len(db), total_unique))
+        LOGGER.info(
+            'All done! parsed %s sets credentials, found %s valid creds\nUnique sets: %s.' % (
+                total_creds, len(db), total_unique))
     except KeyboardInterrupt:
         LOGGER.critical("[CTRL+C] Stopping the tool")
         exit(1)
