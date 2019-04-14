@@ -58,10 +58,11 @@ def excptn(e):
 
 def output(filename, db):
     try:
-        with open(filename + ".csv", mode='a') as output_csv:
+        with open(filename + ".csv", mode='a', newline='') as output_csv:
             fieldnames = ['Domain', 'Username', 'Password', 'NTLM-Hash']
             creds_writer = csv.DictWriter(output_csv, fieldnames=fieldnames)
             creds_writer.writeheader()  # adding the 1st line for the csv for filtering
+
             duplicate_rows = []
             total_unique = 0
 
@@ -173,8 +174,9 @@ def main():
         else:
             LOGGER.warning('Could not find it! Did you specify existing file or folder?')
         LOGGER.info(
-            'All done! parsed %s sets credentials, found %s valid creds\nUnique sets: %s.' % (
-                total_creds, len(db), total_unique))
+            'All done! parsed %s sets credentials, found %s valid creds.\nUnique sets: %s.\nSaving '
+            'them to the output file: %s'r'\%s.csv.' % (
+                total_creds, len(db), total_unique, os.getcwd(), args.output))
     except KeyboardInterrupt:
         LOGGER.critical("[CTRL+C] Stopping the tool")
         exit(1)
