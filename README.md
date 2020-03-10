@@ -1,6 +1,6 @@
 # KatzKatz
 
-KatzKatz is a python tool to parse text files containing output from Mimikatz sekurlsa::logonpasswords module.
+KatzKatz is a python3 tool to parse text files containing output from Mimikatz sekurlsa::logonpasswords module.
 When performing an internal network pentest sometimes you found yourself gathering many lsass.exe process dumps, 
 open them using Mimikatz in order to extract clear text passwords and\or NTLM password hashes. 
 Once you getter many of those (and usually some of them contain many credential sets) it becomes a bit cumbersome
@@ -15,11 +15,11 @@ In addition, it will compare the output and will save only unique sets of creden
 ## How to use it
 First, install the needed dependencies:
 ```
-pip install -r requirments.txt
+pip3 install -r requirments.txt
 ```
 Second, run the tool with the needed flags:
 ```
-python KatzKatz.py -f [FILENAME]
+python3 KatzKatz.py -f [FILENAME]
 ```
 
 ## Options to consider
@@ -29,7 +29,7 @@ python KatzKatz.py -f [FILENAME]
  * output file name (csv)
  
 ### Compatibility
-This was tested with python 2.7 and Mimikatz 2.0+ version
+This was tested with python 3.4 and Mimikatz 2.0+ version
 
 ### Example
 Using the script on a folder containing multiple text and dmp files:
