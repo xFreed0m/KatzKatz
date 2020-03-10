@@ -15,7 +15,7 @@ In addition, it will compare the output and will save only unique sets of creden
 ## How to use it
 First, install the needed dependencies:
 ```
-pip3 install -r requirments.txt
+pip3 install -r requirements.txt
 ```
 Second, run the tool with the needed flags:
 ```
