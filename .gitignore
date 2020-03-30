@@ -117,3 +117,5 @@ dmypy.json
 .log
 .idea
 .csv
+*.txt
+*.csv
