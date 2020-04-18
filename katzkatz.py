@@ -1,6 +1,7 @@
 # A simple python script to parse text files containing output
-# from mimikatz sekurlsa::logonpasswords
-# create by @x_Freed0m
+# from mimikatz sekurlsa::logonpasswords (https://github.com/gentilkiwi/mimikatz)
+# and from pypykatz (https://github.com/skelsec/pypykatz)
+# created by @x_Freed0m
 
 
 import argparse
@@ -91,24 +92,29 @@ def is_valid_input(file_location):  # checking if file is txt or not (when runni
 
 def parser(input_file):
     if not is_valid_input(input_file):
+        # skipping non-txt files
         LOGGER.error(
             "File isn't text or doesn't exist, please recheck (moving forward to the next one)")
         return [], 0
     try:
+        # regex to get each paragraph output
         paragraph_regex = re.compile(
-            r"\t((msv|tspkg|wdigest|kerberos|ssp|credman) :\t)\n((\t .*\n)+)", re.M)
-        username_regex = re.compile(r"\s*\*\s+Username\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
-        password_regex = re.compile(r"\s*\*\s+Password\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
-        domain_regex = re.compile(r"\s*\*\s+Domain\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
-        ntlm_regex = re.compile(r"\s*\*\s+NTLM\s+:\s+((?!\(null\)).+)\s*(?!\$)", re.M)
+            r"(?i)\s*(msv|tspkg|wdigest|kerberos|ssp|credman)(:|.*)\n(((\t |\t\t).*\n)+)", flags=re.M)
+
+        username_regex = re.compile(r"(?i)(?i)\s+Username.* ((?!\(null\)).*)(?!\$)", flags=re.M)
+        password_regex = re.compile(r"\s*\*\s+Password\s+:\s+((?!\(null\)).+)\s*(?!\$)", flags=re.M)
+        domain_regex = re.compile(r"\s*\*\s+Domain\s+:\s+((?!\(null\)).+)\s*(?!\$)", flags=re.M)
+        ntlm_regex = re.compile(r"(?i)\s*\s+NT.*:\s+((?!\(null\)).+)(?!\$)", flags=re.M)
+
         db = []
         with open(input_file) as i:
-            mimikatz_content = i.read()
-            para = paragraph_regex.findall(mimikatz_content)
+            file_content = i.read()
+            para = paragraph_regex.findall(file_content)
             cred_counter = 0
-            for grp in para:
+
+            for mimi_grp in para:
                 user_dict = {}
-                grp_content = grp[2]
+                grp_content = mimi_grp[2]
                 cred_counter += 1
                 username = username_regex.findall(grp_content)
                 if not username:
@@ -124,10 +130,11 @@ def parser(input_file):
                 ntlm_hash = ntlm_regex.findall(grp_content)
                 if ntlm_hash:
                     user_dict['NTLM-Hash'] = ntlm_hash[0]
-                if user_dict and not user_dict['Username'].endswith('$') and (
+                if user_dict and not str(user_dict['Username']).endswith('$') and (
                         'NTLM-Hash' in user_dict.keys() or 'Password' in user_dict.keys()):
                     if user_dict not in db:
                         db.append(user_dict)
+
         return db, cred_counter
     except KeyboardInterrupt:
         LOGGER.critical("[CTRL+C] Stopping the tool")
